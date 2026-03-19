@@ -71,7 +71,7 @@ MIDDLEWARE = [
     'schoolApp.middleware.AutoLogoutMiddleware',
 ]
 # STATIC_URL = '/static/' 
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 ROOT_URLCONF = 'projectSchools.urls'
 
@@ -177,7 +177,7 @@ SESSION_SAVE_EVERY_REQUEST = True  # Save session on every request
 # CSRF & Security Configuration
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='http://localhost:8000,http://127.0.0.1:8000, https://eduforall-project.onrender.com'
+    default='http://localhost:8000,http://127.0.0.1:8000,https://eduforall-project.onrender.com'
 ).split(',')
 
 # Add your Vercel domain here once deployed
