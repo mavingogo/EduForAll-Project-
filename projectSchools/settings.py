@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-wk(jx8y6_2c63sd2w4pne_hwsko8d#evwk_!6=jo1996j(4dv^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool) 
+DEBUG = config('DEBUG', default=False, cast=bool) 
 # DEBUG = config('DEBUG', default=True, cast=bool)
 
 # ALLOWED_HOSTS configuration
@@ -41,7 +41,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 #     ALLOWED_HOSTS += ['.vercel.app', '.onrender.com', 'eduforall-project.onrender.com']
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1,eduforall-project.onrender.com,.onrender.com'
+    default='localhost,127.0.0.1,eduforall-project.onrender.com,.onrender.com,.vercel.app'
 ).split(',')
 
 
@@ -94,19 +94,38 @@ WSGI_APPLICATION = 'projectSchools.wsgi.application'
 
 
 # Database Configuration
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-# Use environment variable DATABASE_URL for Postgres or SQLite for development
+db_url = config('DATABASE_URL', default=None)
 
-if config('DATABASE_URL', default=None):
-    # Production: Use managed Postgres (Neon, ElephantSQL, Render DB, etc.)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DATABASE_URL'),
-            conn_max_age=600
-        )
-    }
+if db_url:
+    try:
+        # Try to parse as database URL
+        test_db = dj_database_url.parse(db_url)
+        if db_url.startswith(('postgres://', 'postgresql://')):
+            DATABASES = {
+                'default': dj_database_url.config(
+                    default=db_url,
+                    conn_max_age=600,
+                    ssl_require=True  # Common for Render/Neon/Vercel
+                )
+            }
+        else:
+            # Not a recognized database URL, fall back to SQLite
+            DATABASES = {
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': BASE_DIR / 'db.sqlite3',
+                }
+            }
+    except dj_database_url.UnknownSchemeError:
+        # Invalid scheme, fall back to SQLite
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
-    # Development: Use SQLite
+    # No DATABASE_URL set, use SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -156,7 +175,8 @@ STATICFILES_DIRS = [
 ]
 
 # WhiteNoise Configuration for serving static files in production
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+WHITENOISE_MANIFEST_STRICT = False
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
@@ -188,7 +208,7 @@ CSRF_TRUSTED_ORIGINS = config(
 
 # Security settings for production
 if not DEBUG:
-    SECURE_SSL_REDIRECT = False
+    SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
