@@ -136,3 +136,5 @@ media/
 
 # Vercel
 .vercel
+
+.env
