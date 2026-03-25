@@ -49,7 +49,7 @@ class AutoLogoutMiddleware(MiddlewareMixin):
                     # Session expired, log out
                     request.session.flush()
                     messages.warning(request, 'Your session has expired. Please log in again.')
-                    return redirect('/schoolApp/login/')
+                    return redirect('login')
         
         # Update last activity
         from django.utils import timezone

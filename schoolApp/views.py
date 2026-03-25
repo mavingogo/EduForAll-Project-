@@ -206,7 +206,7 @@ def dashboard_view(request):
     """Show user dashboard after login"""
     if 'user_id' not in request.session:
         messages.warning(request, 'Please log in first')
-        return redirect('/schoolApp/login/')
+        return redirect('login')
     
     user_role = request.session.get('user_role')
     user_id = request.session.get('user_id')
@@ -310,7 +310,7 @@ def learning_center_view(request):
     except (models.Student.DoesNotExist, models.Mentor.DoesNotExist):
         request.session.flush()
         messages.error(request, 'User not found. Please log in again')
-        return redirect('/schoolApp/login/')
+        return redirect('login')
     
     # Get all courses for display
     all_courses = models.Course.objects.all()
