@@ -219,7 +219,7 @@ def dashboard_view(request):
     except (models.Student.DoesNotExist, models.Mentor.DoesNotExist):
         request.session.flush()
         messages.error(request, 'User not found. Please log in again')
-        return redirect('/schoolApp/login/')
+        return redirect('login')
     
     context = {
         'user': user,
@@ -296,7 +296,7 @@ def learning_center_view(request):
     """Learning center - accessible only to logged-in users"""
     if 'user_id' not in request.session:
         messages.warning(request, 'Please log in first')
-        return redirect('/schoolApp/login/')
+        return redirect('login')
     
     user_role = request.session.get('user_role')
     user_id = request.session.get('user_id')

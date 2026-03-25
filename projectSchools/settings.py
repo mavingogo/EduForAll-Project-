@@ -26,8 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-wk(jx8y6_2c63sd2w4pne_hwsko8d#evwk_!6=jo1996j(4dv^')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool) 
-# DEBUG = config('DEBUG', default=True, cast=bool)
+# DEBUG = config('DEBUG', default=True, cast=bool) 
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 # ALLOWED_HOSTS configuration
 # ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
@@ -70,8 +70,24 @@ MIDDLEWARE = [
     'schoolApp.middleware.SessionMiddleware',
     'schoolApp.middleware.AutoLogoutMiddleware',
 ]
-# STATIC_URL = '/static/' 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+STATIC_URL = 'static/'
+# This tells Django where to put files when you run collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# This tells Django where to look for your custom static files
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# import os
+# STATIC_URL = 'static/' 
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 ROOT_URLCONF = 'projectSchools.urls'
 
@@ -230,6 +246,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For developm
 DEFAULT_FROM_EMAIL = 'noreply@eduforall.com'
 
 # Add this at the very end of settings.py
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+if DEBUG:
+        SECURE_SSL_REDIRECT = False
+        SESSION_COOKIE_SECURE = False
+        CSRF_COOKIE_SECURE = False
+        SECURE_HSTS_SECONDS = 0
+
+
+# try:
+#     from .local_settings import *
+# except ImportError:
+#     pass
+
