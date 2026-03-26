@@ -140,3 +140,4 @@ media/
 .env
 
 projectSchools/local_settings.py 
+.env 

@@ -21,6 +21,14 @@
     z-index: 99;
 }
 
+/* Ensure the AI Chatbot is positioned on the bottom left */
+#bp-web-widget-container,
+#bp-web-widget {
+    bottom: 45px !important;
+    left: 45px !important;
+    right: auto !important;
+}
+
 
 /*** Spinner ***/
 #spinner {
